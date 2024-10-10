@@ -171,8 +171,6 @@ def interpolation(xyz, new_xyz, feat, offset, new_offset, k=3):
     dist_recip = 1.0 / (dist + 1e-8) # (n, 3)
     norm = torch.sum(dist_recip, dim=1, keepdim=True)
     weight = dist_recip / norm # (n, 3)
-    #why,,?
-    weight = weight.detach()
 
     new_feat = torch.cuda.FloatTensor(new_xyz.shape[0], feat.shape[1]).zero_()
     for i in range(k):

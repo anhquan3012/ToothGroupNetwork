@@ -29,11 +29,11 @@ for dir_path in [
     x[0] for x in os.walk(args.input_dir_path)
     ][1:]:
     if os.path.basename(dir_path) in split_base_name_ls: 
-        stl_path_ls += glob(os.path.join(dir_path,"*.obj"))
+        stl_path_ls += glob(os.path.join(dir_path,"*.stl"))
 
 pred_obj = ScanSegmentation(make_inference_pipeline(args.model_name, [args.checkpoint_path+".h5", args.checkpoint_path_bdl+".h5"]))
 os.makedirs(args.save_path, exist_ok=True)
 for i in range(len(stl_path_ls)):
     print(f"Processing: ", i,":",stl_path_ls[i])
     base_name = os.path.basename(stl_path_ls[i]).split(".")[0]
-    pred_obj.process(stl_path_ls[i], os.path.join(args.save_path, os.path.basename(stl_path_ls[i]).replace(".obj", ".json")))
+    pred_obj.process(stl_path_ls[i], os.path.join(args.save_path, os.path.basename(stl_path_ls[i]).replace(".stl", ".json")))

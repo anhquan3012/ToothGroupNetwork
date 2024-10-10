@@ -58,6 +58,8 @@ class ScanSegmentation():  # SegmentationAlgorithm is not inherited in this clas
         with open(output_path, 'w') as fp:
             json.dump(pred_output, fp, cls=NpEncoder)
 
+
+
         return
 
     @staticmethod

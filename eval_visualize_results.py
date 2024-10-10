@@ -12,7 +12,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Inference models')
 parser.add_argument('--mesh_path', default="G:/tooth_seg/main/all_datas/chl/3D_scans_per_patient_obj_files/013FHA7K/013FHA7K_lower.obj", type=str)
-parser.add_argument('--gt_json_path', default="G:/tooth_seg/main/all_datas/chl/ground-truth_labels_instances/013FHA7K/013FHA7K_lower.json" ,type=str)
+# parser.add_argument('--gt_json_path', default="G:/tooth_seg/main/all_datas/chl/ground-truth_labels_instances/013FHA7K/013FHA7K_lower.json" ,type=str)
 parser.add_argument('--pred_json_path', type=str, default="test_results/013FHA7K_lower.json")
 args = parser.parse_args()
 
@@ -56,14 +56,14 @@ def cal_metric(gt_labels, pred_sem_labels, pred_ins_labels, is_half=None, vertic
         #print("gt is", gt_label_name, "pred is", sem_label_name, sem_label_name == gt_label_name)
     return IOU/len(ins_label_names), F1/len(ins_label_names), ACC/len(ins_label_names), SEM_ACC/len(ins_label_names), IOU_arr
 
-gt_loaded_json = gu.load_json(args.gt_json_path)
-gt_labels = np.array(gt_loaded_json['labels']).reshape(-1)
+# gt_loaded_json = gu.load_json(args.gt_json_path)
+# gt_labels = np.array(gt_loaded_json['labels']).reshape(-1)
 
 pred_loaded_json = gu.load_json(args.pred_json_path)
 pred_labels = np.array(pred_loaded_json['labels']).reshape(-1)
 
-IoU, F1, Acc, SEM_ACC, _ = cal_metric(gt_labels, pred_labels, pred_labels) # F1 -> TSA, SEM_ACC -> TIR
-print("IoU", IoU, "F1(TSA)", F1, "SEM_ACC(TIR)", SEM_ACC)
+# IoU, F1, Acc, SEM_ACC, _ = cal_metric(gt_labels, pred_labels, pred_labels) # F1 -> TSA, SEM_ACC -> TIR
+# print("IoU", IoU, "F1(TSA)", F1, "SEM_ACC(TIR)", SEM_ACC)
 _, mesh = gu.read_txt_obj_ls(args.mesh_path, ret_mesh=True, use_tri_mesh=True)
-gu.print_3d(gu.get_colored_mesh(mesh, gt_labels)) # color is random
+# gu.print_3d(gu.get_colored_mesh(mesh, gt_labels)) # color is random
 gu.print_3d(gu.get_colored_mesh(mesh, pred_labels)) # color is random

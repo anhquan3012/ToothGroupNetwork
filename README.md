@@ -190,11 +190,10 @@
 - With just a few modifications to the provided code, you can write code to test all the results.
 
 
-# Installation
-- Installtion is tested on pytorch/pytorch:1.7.1-cuda11.0-cudnn8-devel(ubuntu, pytorch 1.7.1) docker image.
+# Installation 
 - It can be installed on other OS(window, etc..)
 - There are some issues with RTX40XX graphic cards. plz report in issue board.
-- if you have any issues while installing pointops library, please install another pointops library source in (https://github.com/POSTECH-CVLab/point-transformer).
+- Required softwares: NVIDIA Cudatoolkit 11.7 and NVIDIA GPU Driver 
   ```
   pip install wandb
   pip install --ignore-installed PyYAML
@@ -203,6 +202,7 @@
   pip install termcolor
   pip install trimesh
   pip install easydict
+  pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117
   cd external_libs/pointops && python setup.py install
   ```
 

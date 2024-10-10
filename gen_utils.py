@@ -201,7 +201,7 @@ def read_txt(file_path):
 def read_txt_obj_ls(path, ret_mesh=False, use_tri_mesh=False):
     # In some cases, trimesh can change vertex order
     if use_tri_mesh:
-        tri_mesh_loaded_mesh = trimesh.load_mesh(path, process=False)
+        tri_mesh_loaded_mesh = trimesh.load_mesh(path, file_type='stl')
         vertex_ls = np.array(tri_mesh_loaded_mesh.vertices)
         tri_ls = np.array(tri_mesh_loaded_mesh.faces)+1
     else:
@@ -229,11 +229,24 @@ def read_txt_obj_ls(path, ret_mesh=False, use_tri_mesh=False):
     mesh = o3d.geometry.TriangleMesh()
     mesh.vertices = o3d.utility.Vector3dVector(vertex_ls)
     mesh.triangles = o3d.utility.Vector3iVector(np.array(tri_ls)-1)
+
+    if 'upper' in path:
+        transformation_matrix = np.array([
+            [-1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, -1, 0],
+            [0, 0, 0, 1]
+        ])
+        # Apply the transformation
+        mesh = mesh.transform(transformation_matrix)
+
     mesh.compute_vertex_normals()
 
     norms = np.array(mesh.vertex_normals)
 
     vertex_ls = np.array(vertex_ls)
+    # vertex_ls = np.asarray(mesh.vertices)
+    # print("vertex_ls", vertex_ls)
     output = [np.concatenate([vertex_ls,norms], axis=1)]
 
     if ret_mesh:
