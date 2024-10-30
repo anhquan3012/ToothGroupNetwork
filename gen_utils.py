@@ -198,12 +198,13 @@ def read_txt(file_path):
 
     return path_ls
 
-def read_txt_obj_ls(path, ret_mesh=False, use_tri_mesh=False):
+def read_txt_obj_ls(path,
+                    ret_mesh=False, 
+                    use_tri_mesh=False,
+                    creating_color_mesh=False):
     # In some cases, trimesh can change vertex order
     if use_tri_mesh:
-        tri_mesh_loaded_mesh = trimesh.load_mesh(path, file_type='stl')
-        vertex_ls = np.array(tri_mesh_loaded_mesh.vertices)
-        tri_ls = np.array(tri_mesh_loaded_mesh.faces)+1
+        mesh = o3d.io.read_triangle_mesh(path)
     else:
         f = open(path, 'r')
         vertex_ls = []
@@ -226,11 +227,12 @@ def read_txt_obj_ls(path, ret_mesh=False, use_tri_mesh=False):
                 continue
         f.close()
 
-    mesh = o3d.geometry.TriangleMesh()
-    mesh.vertices = o3d.utility.Vector3dVector(vertex_ls)
-    mesh.triangles = o3d.utility.Vector3iVector(np.array(tri_ls)-1)
+        mesh = o3d.geometry.TriangleMesh()
+        mesh.vertices = o3d.utility.Vector3dVector(vertex_ls)
+        mesh.triangles = o3d.utility.Vector3iVector(np.array(tri_ls)-1)
 
-    if 'upper' in path:
+    _, jaw = os.path.basename(path).split('.')[0].split('_')
+    if jaw == 'upper' and not creating_color_mesh:
         transformation_matrix = np.array([
             [-1, 0, 0, 0],
             [0, 1, 0, 0],
@@ -244,8 +246,8 @@ def read_txt_obj_ls(path, ret_mesh=False, use_tri_mesh=False):
 
     norms = np.array(mesh.vertex_normals)
 
-    vertex_ls = np.array(vertex_ls)
-    # vertex_ls = np.asarray(mesh.vertices)
+    # vertex_ls = np.array(vertex_ls)
+    vertex_ls = np.asarray(mesh.vertices)
     # print("vertex_ls", vertex_ls)
     output = [np.concatenate([vertex_ls,norms], axis=1)]
 

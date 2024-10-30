@@ -5,9 +5,11 @@ import os
 from distutils.sysconfig import get_config_vars
 
 (opt,) = get_config_vars('OPT')
-os.environ['OPT'] = " ".join(
-    flag for flag in opt.split() if flag != '-Wstrict-prototypes'
-)
+
+if opt is not None:
+    os.environ['OPT'] = " ".join(
+        flag for flag in opt.split() if flag != '-Wstrict-prototypes'
+    )
 
 setup(
     name='pointops',
@@ -28,7 +30,7 @@ setup(
             'src/aggregation/aggregation_cuda.cpp',
             'src/aggregation/aggregation_cuda_kernel.cu',
             ],
-        extra_compile_args={'cxx': ['-g'], 'nvcc': ['-O2']}
+        extra_compile_args={'cxx': ['/EHsc'], 'nvcc': ['-O2']}
         )
     ],
     cmdclass={'build_ext': BuildExtension}
