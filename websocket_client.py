@@ -7,11 +7,13 @@ async def test_inference():
     uri = "ws://localhost:8800"
     async with websockets.connect(uri) as websocket:
         # Replace these paths with your actual input and output directories
-        input_dir = "C:\\Users\\Quan Tran\\ToothGroupNetwork\\samples\\SAMPLE1"
+        lower_scan = "C:\\Users\\Quan Tran\\ToothGroupNetwork\\samples\\SAMPLE1\\SAMPLE1_lower.stl"
+        upper_scan = "C:\\Users\\Quan Tran\\ToothGroupNetwork\\samples\\SAMPLE1\\SAMPLE1_upper.stl"
         output_dir = "C:\\Users\\Quan Tran\\ToothGroupNetwork\\results"
 
         request = {
-            "input_dir": input_dir,
+            "lower_scan": lower_scan,
+            "upper_scan": upper_scan,
             "output_dir": output_dir
         }
 

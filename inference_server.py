@@ -13,12 +13,13 @@ async def handle_connection(websocket, path):
                 await websocket.send(json.dumps(response))
                 continue
             
-            input_dir = data.get("input_dir")
+            lower_scan = data.get("lower_scan")
+            upper_scan = data.get("upper_scan")
             output_dir = data.get("output_dir")
 
-            if input_dir and output_dir:
+            if (lower_scan != 'null' or upper_scan != 'null') and output_dir:
                 try:
-                    inference_tgnet(input_dir, output_dir)
+                    inference_tgnet(lower_scan, upper_scan, output_dir)
                     response = {"status": "success", "message": "Inference completed successfully."}
                 except Exception as e:
                     response = {"status": "error", "message": str(e)}

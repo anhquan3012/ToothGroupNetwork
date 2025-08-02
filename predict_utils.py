@@ -189,43 +189,24 @@ class ScanSegmentation():  # SegmentationAlgorithm is not inherited in this clas
 
         return jaw
 
-    def predict(self, inputs):
+    def predict(self, scan_path, jaw):
         """
         Your algorithm goes here
         """
 
         try:
-            assert len(inputs) == 1, f"Expected only one path in inputs, got {len(inputs)}"
-        except AssertionError as e:
-            raise Exception(e.args)
-        scan_path = inputs[0]
-        #print(f"loading scan : {scan_path}")
-        # read input 3D scan .obj
-        try:
-            # you can use trimesh or other any loader we keep the same order
-            #mesh = trimesh.load(scan_path, process=False)
             pred_result = self.chl_pipeline(scan_path)
-            jaw = self.get_jaw(scan_path)
             if jaw == "lower":
                 pred_result["sem"][pred_result["sem"]>0] += 20
             elif jaw=="upper":
                 pass
-            else:
-                raise "jaw name error"
-            print("jaw processed is:", jaw)
         except Exception as e:
             print(str(e))
             print(traceback.format_exc())
             raise
-        # preprocessing if needed
-        # prep_data = preprocess_function(mesh)
-        # inference data here
-        # labels, instances = self.model(mesh, jaw=None)
 
         # extract number of vertices from mesh
         nb_vertices = pred_result["sem"].shape[0]
-
-        # just for testing : generate dummy output instances and labels
         instances = pred_result["ins"].astype(int).tolist()
         labels = pred_result["sem"].astype(int).tolist()
 
@@ -235,15 +216,14 @@ class ScanSegmentation():  # SegmentationAlgorithm is not inherited in this clas
         except AssertionError as e:
             raise Exception(e.args)
 
-        return labels, instances, jaw
+        return labels, instances
 
-    def process(self, input_path, output_path):
+    def process(self, input_path, output_path, jaw):
         """
         Read input from /input, process with your algorithm and write to /output
         assumption /input contains only 1 file
         """
-        #input = self.load_input(input_dir='./test/test_local')
-        labels, instances, jaw = self.predict([input_path])
+        labels, instances = self.predict(scan_path=input_path, jaw=jaw)
 
         # read mesh from obj file
         _, mesh = read_txt_obj_ls(input_path, ret_mesh=True, use_tri_mesh=True, creating_color_mesh=True)
@@ -255,12 +235,5 @@ class ScanSegmentation():  # SegmentationAlgorithm is not inherited in this clas
         # write output
         with open(output_path.replace(".json", "_braces_location.json"), 'w') as fp:
             json.dump(braces_location, fp, indent=4)
-
-        # color the closet vertex to the center of the tooth with black
-        # for lbl in braces_location.keys():
-        #     center = np.array(braces_location[lbl]["center_location"])
-        #     closest_vertex = np.argmin(np.linalg.norm(np.array(mesh.vertices)-center, axis=1))
-        #     mesh.vertex_colors[closest_vertex] = [0, 0, 0]
-        # o3d.io.write_triangle_mesh(output_path.replace(".json", "_withcenter.obj"), mesh)
 
         self.write_output(labels=labels, instances=instances, jaw=jaw, output_path=output_path)
