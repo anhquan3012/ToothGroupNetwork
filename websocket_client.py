@@ -7,7 +7,7 @@ async def test_inference():
     uri = "ws://localhost:8800"
     async with websockets.connect(uri) as websocket:
         # Replace these paths with your actual input and output directories
-        lower_scan = "C:\\Users\\siddh\\OneDrive\\Documents\\ToothSegmentation\\ToothGroupNetwork\\samples\\SAMPLE1\\SAMPLE1_lower.stl"
+        lower_scan = "C:\\Users\\siddh\\OneDrive\\Documents\\ToothSegmentation\\ToothGroupNetwork\\samples\\SAMPLE1\\SAMPLE1_l.stl"
         upper_scan = "null"
         output_dir = "C:\\Users\\siddh\\OneDrive\\Documents\\ToothSegmentation\\ToothGroupNetwork\\results"
 
