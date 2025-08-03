@@ -1,1 +1,1 @@
-pyinstaller inference_tgnet.py --add-data .\models\modules\cbl_point_transformer\default.yaml:models\modules\cbl_point_transformer --add-data .\ckpts\tgnet_bdl.h5:ckpts --add-data .\ckpts\tgnet_fps.h5:ckpts 
+pyinstaller inference_server.py --add-data .\models\modules\cbl_point_transformer\default.yaml:models\modules\cbl_point_transformer --add-data .\ckpts\tgnet_bdl.h5:ckpts --add-data .\ckpts\tgnet_fps.h5:ckpts 

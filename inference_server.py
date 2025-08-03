@@ -3,7 +3,7 @@ import websockets
 import json
 from inference_tgnet import inference_tgnet
 
-async def handle_connection(websocket, path):
+async def handle_connection(websocket):
     try:
         async for message in websocket:
             try:
