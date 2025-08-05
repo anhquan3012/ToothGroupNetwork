@@ -5,10 +5,13 @@ import json
 
 async def test_inference():
     uri = "ws://localhost:8800"
-    async with websockets.connect(uri) as websocket:
+    async with websockets.connect(uri,
+            ping_interval=20,
+            ping_timeout=60,
+            close_timeout=10) as websocket:
         # Replace these paths with your actual input and output directories
         lower_scan = "C:\\Users\\siddh\\OneDrive\\Documents\\ToothSegmentation\\ToothGroupNetwork\\samples\\SAMPLE1\\SAMPLE1_l.stl"
-        upper_scan = "null"
+        upper_scan = "C:\\Users\\siddh\\OneDrive\\Documents\\ToothSegmentation\\ToothGroupNetwork\\samples\\SAMPLE1\\SAMPLE1_u.stl"
         output_dir = "C:\\Users\\siddh\\OneDrive\\Documents\\ToothSegmentation\\ToothGroupNetwork\\results"
 
         request = {

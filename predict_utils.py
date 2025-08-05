@@ -60,7 +60,6 @@ def get_mesh_of_each_tooth(mesh, label_arr, label):
     face_mask = np.all(np.isin(faces, vertex_indices), axis=1)
     filtered_faces = faces[face_mask]
     
-    
     # Map the vertex indices to the new mesh
     unique_vertex_indices, new_faces = np.unique(filtered_faces, return_inverse=True)
     new_vertices = vertices[unique_vertex_indices]
@@ -75,11 +74,10 @@ def get_mesh_of_each_tooth(mesh, label_arr, label):
     
     return new_mesh
 
-
-def get_brace_location(mesh, label_arr):
+def save_tooth_and_get_brace_location(mesh, label_arr, ind_dir):
     brace_locations = {}
     for lbl in np.unique(label_arr):
-        tooth_mesh = get_mesh_of_each_tooth(mesh, label_arr, lbl)
+        tooth_mesh = get_mesh_of_each_tooth(mesh, label_arr, lbl) 
         if lbl in [11, 12, 21, 22, 31, 32, 41, 42]:
             outer_mesh = tooth_mesh.select_by_index(np.where(np.array(tooth_mesh.vertex_normals)[:,1]<=0)[0])
             center = np.mean(np.array(outer_mesh.vertices), axis=0)
@@ -110,6 +108,9 @@ def get_brace_location(mesh, label_arr):
             closest_vertex_normal = np.array(outer_mesh.vertex_normals)[closest_vertex]
             brace_locations[int(lbl)] = {"center_location": np.array(outer_mesh.vertices)[closest_vertex].tolist(), 
                                     "normal_vector": closest_vertex_normal.tolist()}
+
+        tooth_mesh.compute_vertex_normals()
+        o3d.io.write_triangle_mesh(ind_dir + f"/tooth_{lbl}.stl", tooth_mesh)
     return brace_locations
 
 
@@ -166,8 +167,6 @@ class ScanSegmentation():  # SegmentationAlgorithm is not inherited in this clas
         with open(output_path, 'w') as fp:
             json.dump(pred_output, fp, cls=NpEncoder)
 
-
-
         return
 
     @staticmethod
@@ -195,7 +194,7 @@ class ScanSegmentation():  # SegmentationAlgorithm is not inherited in this clas
         """
 
         try:
-            pred_result = self.chl_pipeline(scan_path)
+            pred_result = self.chl_pipeline(scan_path, jaw)
             if jaw == "lower":
                 pred_result["sem"][pred_result["sem"]>0] += 20
             elif jaw=="upper":
@@ -226,14 +225,16 @@ class ScanSegmentation():  # SegmentationAlgorithm is not inherited in this clas
         labels, instances = self.predict(scan_path=input_path, jaw=jaw)
 
         # read mesh from obj file
-        _, mesh = read_txt_obj_ls(input_path, ret_mesh=True, use_tri_mesh=True, creating_color_mesh=True)
+        _, mesh = read_txt_obj_ls(input_path, jaw=jaw, ret_mesh=True, use_tri_mesh=True, creating_color_mesh=True)
         mesh = mesh.remove_duplicated_vertices()
-        mesh = get_colored_mesh(mesh, np.array(labels))
-        o3d.io.write_triangle_mesh(output_path.replace(".json", ".obj"), mesh)
 
-        braces_location = get_brace_location(mesh, np.array(labels))
+        # mesh = get_colored_mesh(mesh, np.array(labels))
+        # o3d.io.write_triangle_mesh(output_path.replace(".json", ".obj"), mesh)
+
+        os.makedirs(output_path.replace("_labels.json", "_individual"), exist_ok=True)
+        braces_location = save_tooth_and_get_brace_location(mesh, np.array(labels), output_path.replace("_labels.json", "_individual"))
         # write output
-        with open(output_path.replace(".json", "_braces_location.json"), 'w') as fp:
+        with open(output_path.replace("_labels.json", "_braces_location.json"), 'w') as fp:
             json.dump(braces_location, fp, indent=4)
 
         self.write_output(labels=labels, instances=instances, jaw=jaw, output_path=output_path)

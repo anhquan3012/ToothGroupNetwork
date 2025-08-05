@@ -21,9 +21,9 @@ class InferencePipeLine:
         self.bdl_module.cuda()
         self.bdl_module.load_state_dict(torch.load(self.config["boundary_model_info"]["load_ckpt_path"]))
 
-    def __call__(self, stl_path):
+    def __call__(self, stl_path, jaw):
         DEBUG=False
-        _, mesh = gu.read_txt_obj_ls(stl_path, ret_mesh=True, use_tri_mesh=True) #TODO slow processing speed
+        _, mesh = gu.read_txt_obj_ls(stl_path, jaw, ret_mesh=True, use_tri_mesh=True) #TODO slow processing speed
         mesh = mesh.remove_duplicated_vertices()
         vertices = np.array(mesh.vertices)
         n_vertices = vertices.shape[0]

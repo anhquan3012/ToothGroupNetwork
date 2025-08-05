@@ -33,11 +33,11 @@ def inference_tgnet(lower_scan, upper_scan, output_dir):
     tasks = []
     
     if lower_scan != 'null':
-        lower_output = os.path.join(output_dir, os.path.basename(lower_scan).replace(".stl", ".json"))
+        lower_output = os.path.join(output_dir, os.path.basename(lower_scan).replace(".stl", "_labels.json"))
         tasks.append((pred_obj, lower_scan, lower_output, "lower"))
     
     if upper_scan != 'null':
-        upper_output = os.path.join(output_dir, os.path.basename(upper_scan).replace(".stl", ".json"))
+        upper_output = os.path.join(output_dir, os.path.basename(upper_scan).replace(".stl", "_labels.json"))
         tasks.append((pred_obj, upper_scan, upper_output, "upper"))
     
     # Process scans concurrently

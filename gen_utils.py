@@ -199,6 +199,7 @@ def read_txt(file_path):
     return path_ls
 
 def read_txt_obj_ls(path,
+                    jaw,
                     ret_mesh=False, 
                     use_tri_mesh=False,
                     creating_color_mesh=False):
@@ -231,7 +232,6 @@ def read_txt_obj_ls(path,
         mesh.vertices = o3d.utility.Vector3dVector(vertex_ls)
         mesh.triangles = o3d.utility.Vector3iVector(np.array(tri_ls)-1)
 
-    _, jaw = os.path.basename(path).split('.')[0].split('_')
     if jaw == 'upper' and not creating_color_mesh:
         transformation_matrix = np.array([
             [-1, 0, 0, 0],
