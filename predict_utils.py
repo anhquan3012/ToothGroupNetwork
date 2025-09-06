@@ -57,7 +57,7 @@ def get_mesh_of_each_tooth(mesh, label_arr, label):
     vertex_indices = np.where(label_arr == label)[0]
     
     # Create a mask for faces that are composed entirely of the filtered vertices
-    face_mask = np.all(np.isin(faces, vertex_indices), axis=1)
+    face_mask = np.sum(np.isin(faces, vertex_indices), axis=1) >= 2
     filtered_faces = faces[face_mask]
     
     # Map the vertex indices to the new mesh
