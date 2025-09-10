@@ -8,7 +8,6 @@ from predict_utils import ScanSegmentation
 
 parser = argparse.ArgumentParser(description='Inference models')
 parser.add_argument('--input_dir_path', default="G:/tooth_seg/main/all_datas/chl/3D_scans_per_patient_obj_files", type=str, help = "input directory path that contain obj files.")
-# parser.add_argument('--split_txt_path', default="base_name_test_fold.txt" ,type=str,help = "split txt path.")
 parser.add_argument('--save_path', type=str, default="test_results", help = "result save directory.")
 parser.add_argument('--model_name', type=str, default="tgnet", help = "model name. list: tsegnet | tgnet | pointnet | pointnetpp | dgcnn | pointtransformer")
 parser.add_argument('--checkpoint_path', default="ckpts/tgnet_fps" ,type=str,help = "checkpoint path.")

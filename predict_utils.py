@@ -51,16 +51,17 @@ def get_colored_mesh(mesh, label_arr):
     return mesh
 
 def get_mesh_of_each_tooth(mesh, label_arr, label):
-    # Filter vertices
     vertices = np.asarray(mesh.vertices)
     faces = np.asarray(mesh.triangles)
     vertex_indices = np.where(label_arr == label)[0]
     
-    # Create a mask for faces that are composed entirely of the filtered vertices
-    face_mask = np.sum(np.isin(faces, vertex_indices), axis=1) >= 2
+    # Create a mask for faces that have at least 2 vertices with the target label
+    vertex_match_count = np.sum(np.isin(faces, vertex_indices), axis=1)
+    face_mask = vertex_match_count >= 2
     filtered_faces = faces[face_mask]
     
-    # Map the vertex indices to the new mesh
+    # This line automatically includes ALL vertices used by the filtered faces,
+    # including vertices from other labels that are part of boundary triangles
     unique_vertex_indices, new_faces = np.unique(filtered_faces, return_inverse=True)
     new_vertices = vertices[unique_vertex_indices]
     new_faces = new_faces.reshape(filtered_faces.shape)
@@ -70,7 +71,7 @@ def get_mesh_of_each_tooth(mesh, label_arr, label):
     new_mesh = o3d.geometry.TriangleMesh()
     new_mesh.vertices = o3d.utility.Vector3dVector(new_vertices)
     new_mesh.triangles = o3d.utility.Vector3iVector(new_faces)
-    new_mesh.vertex_normals = o3d.utility.Vector3dVector(new_vertex_normals) 
+    new_mesh.vertex_normals = o3d.utility.Vector3dVector(new_vertex_normals)
     
     return new_mesh
 
